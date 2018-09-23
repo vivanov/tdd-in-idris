@@ -20,3 +20,19 @@ arithInputs seed = map bound (randoms seed)
   where bound : Int -> Int
         bound num with (divides num 9)
           bound ((9 * div) + rem) | (DivBy prf) = rem + 1
+data Face : Type where
+  Heads : Face
+  Tails : Face
+  
+
+getFace: Int -> Face
+getFace num with (divides num 2)
+  getFace ((2 * div) + rem) | (DivBy prf) = case (rem == 0) of
+                                               True => Heads
+                                               False => Tails
+                
+coinFlips : (count: Nat) -> Stream Int -> List Face
+coinFlips Z xs = []
+coinFlips (S k) (value :: xs) = let faced = getFace value in
+                                    faced :: coinFlips k xs
+

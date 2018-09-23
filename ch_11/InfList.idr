@@ -10,3 +10,5 @@ getPrefix : (count: Nat) -> InfList a -> List a
 getPrefix Z xs = []
 getPrefix (S k) (value :: xs) = value :: getPrefix k xs -- Delay/Force are added implicitly
 
+Functor InfList where
+  map func (x :: xs) = func x :: map func xs
