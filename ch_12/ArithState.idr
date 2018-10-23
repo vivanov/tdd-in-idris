@@ -26,6 +26,19 @@ data Command : Type -> Type where
   Pure : ty -> Command ty
   Bind : Command a -> (a -> Command b) -> Command b
   
+mutual 
+  Functor Command where
+    map func cmd = do val <- cmd
+                      Pure (func val)
+  Applicative Command where
+    pure = Pure
+    (<*>) func cmd = do func' <- func
+                        val   <- cmd                      
+                        Pure (func' val)
+
+  Monad Command where
+    (>>=) = Bind
+
 data ConsoleIO : Type -> Type where
   Quit : a -> ConsoleIO a
   Do : Command a -> (a -> Inf (ConsoleIO  b)) -> ConsoleIO b
@@ -86,6 +99,11 @@ addWrong = record { score->attempted $= (+1) }
 
 addCorrect : GameState -> GameState
 addCorrect = record { score->attempted $= (+1), score->correct $= (+1) }
+
+updateGameState : (GameState -> GameState) -> Command ()
+updateGameState f = do state <- GetGameState
+                       PutGameState (f state)
+
 
 mutual
   correct : ConsoleIO GameState
