@@ -119,6 +119,11 @@ mutual
                  quiz
   
   readInput : (prompt : String) -> Command Input
+  readInput prompt = do PutStr prompt
+                        answer <- GetLine
+                        if toLower answer == "quit"
+                           then Pure QuitCmd
+                           else Pure (Answer (cast answer))
   
   quiz : ConsoleIO GameState
   quiz = do num1 <- GetRandom
